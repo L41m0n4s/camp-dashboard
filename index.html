@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rihards — Skills Camp Training Plan</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: #111110;
+    color: #e8e6e0;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+    font-size: 16px;
+    line-height: 1.5;
+    padding: 2rem;
+    max-width: 860px;
+    margin: 0 auto;
+  }
+
+  .camp-header {
+    padding: 1.5rem 0 1rem;
+    border-bottom: 0.5px solid rgba(255,255,255,0.12);
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .camp-title { font-size: 18px; font-weight: 500; color: #e8e6e0; margin: 0 0 2px; }
+  .camp-sub { font-size: 13px; color: #888780; margin: 0; }
+
+  .refresh-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: #1a1a18;
+    border: 0.5px solid rgba(255,255,255,0.2);
+    border-radius: 8px;
+    padding: 7px 14px;
+    font-size: 13px;
+    color: #c8c6c0;
+    cursor: pointer;
+    font-family: inherit;
+    transition: background 0.15s, color 0.15s;
+    flex-shrink: 0;
+  }
+  .refresh-btn:hover { background: #242422; color: #e8e6e0; }
+  .refresh-btn.loading { opacity: 0.5; pointer-events: none; }
+  .refresh-icon { font-size: 15px; display: inline-block; transition: transform 0.6s; }
+  .refresh-btn.loading .refresh-icon { animation: spin 0.8s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .status-bar {
+    font-size: 11px;
+    color: #555552;
+    margin-bottom: 1.25rem;
+    height: 16px;
+  }
+  .status-bar.error { color: #D4537E; }
+  .status-bar.ok { color: #1D9E75; }
+
+  .section-label {
+    font-size: 11px;
+    font-weight: 500;
+    color: #888780;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    margin: 0 0 10px;
+  }
+
+  .week-btns { display: flex; gap: 8px; margin-bottom: 1.25rem; flex-wrap: wrap; }
+  .wbtn {
+    background: #1a1a18;
+    border: 0.5px solid rgba(255,255,255,0.2);
+    border-radius: 8px;
+    padding: 6px 18px;
+    font-size: 13px;
+    color: #888780;
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s;
+    font-family: inherit;
+  }
+  .wbtn:hover { background: #242422; color: #c8c6c0; }
+  .wbtn.active {
+    background: #242422;
+    border-color: rgba(255,255,255,0.35);
+    color: #e8e6e0;
+    font-weight: 500;
+  }
+
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+    margin-bottom: 1.25rem;
+  }
+  .stat { background: #1a1a18; border-radius: 8px; padding: 1rem; }
+  .stat-label { font-size: 12px; color: #888780; margin: 0 0 4px; }
+  .stat-value { font-size: 22px; font-weight: 500; color: #e8e6e0; margin: 0; }
+  .stat-unit { font-size: 13px; font-weight: 400; color: #888780; }
+
+  .chart-full {
+    background: #1a1a18;
+    border: 0.5px solid rgba(255,255,255,0.1);
+    border-radius: 12px;
+    padding: 1rem 1.25rem;
+    margin-bottom: 1.25rem;
+  }
+  .chart-label { font-size: 13px; font-weight: 500; color: #e8e6e0; margin: 0 0 10px; }
+
+  .legend { display: flex; gap: 14px; margin-bottom: 10px; font-size: 12px; color: #888780; }
+  .legend-dot { width: 10px; height: 10px; border-radius: 2px; display: inline-block; margin-right: 4px; vertical-align: middle; }
+
+  .day-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .day-table th {
+    text-align: left;
+    color: #888780;
+    font-weight: 500;
+    font-size: 11px;
+    padding: 4px 8px;
+    border-bottom: 0.5px solid rgba(255,255,255,0.1);
+  }
+  .day-table td {
+    padding: 6px 8px;
+    border-bottom: 0.5px solid rgba(255,255,255,0.07);
+    color: #e8e6e0;
+    vertical-align: middle;
+  }
+  .day-table tr:last-child td { border-bottom: none; }
+  .day-table tr:hover td { background: rgba(255,255,255,0.04); }
+
+  .badge { display: inline-block; font-size: 11px; padding: 2px 8px; border-radius: 4px; font-weight: 500; }
+  .badge-off { background: rgba(255,255,255,0.08); color: #888780; }
+  .badge-note { background: rgba(50,102,173,0.25); color: #85B7EB; }
+  .badge-game { background: rgba(186,117,23,0.25); color: #FAC775; }
+
+  .divider { border: none; border-top: 0.5px solid rgba(255,255,255,0.1); margin: 1.5rem 0; }
+
+  .skeleton {
+    background: linear-gradient(90deg, #1a1a18 25%, #222220 50%, #1a1a18 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.2s infinite;
+    border-radius: 4px;
+    height: 14px;
+  }
+  @keyframes shimmer { to { background-position: -200% 0; } }
+</style>
+</head>
+<body>
+
+<div class="camp-header">
+  <div>
+    <p class="camp-title">Rihards — skills camp training plan</p>
+    <p class="camp-sub" id="campSub">5 weeks</p>
+  </div>
+  <button class="refresh-btn" id="refreshBtn" onclick="loadData()">
+    <span class="refresh-icon">↻</span> Refresh
+  </button>
+</div>
+
+<div class="status-bar" id="statusBar"></div>
+
+<p class="section-label">Weekly detail</p>
+<div class="week-btns" id="weekBtns"></div>
+
+<div class="stats-grid">
+  <div class="stat"><p class="stat-label">Total sessions</p><p class="stat-value" id="s-sessions">—</p></div>
+  <div class="stat"><p class="stat-label">Total training time</p><p class="stat-value" id="s-time">—</p></div>
+  <div class="stat"><p class="stat-label">Active days</p><p class="stat-value" id="s-active">—</p></div>
+  <div class="stat"><p class="stat-label">Avg intensity</p><p class="stat-value" id="s-intensity">—</p></div>
+</div>
+
+<div class="chart-full">
+  <p class="chart-label" id="comboLabel">Intensity & monotony — Week 1</p>
+  <div class="legend">
+    <span><span class="legend-dot" style="background:#3266ad"></span>Intensity</span>
+    <span><span class="legend-dot" style="background:#D4537E"></span>Monotony</span>
+  </div>
+  <div style="position:relative;width:100%;height:240px;">
+    <canvas id="comboChart"></canvas>
+  </div>
+</div>
+
+<div class="chart-full">
+  <p class="chart-label">Daily log</p>
+  <table class="day-table">
+    <thead><tr><th>Date</th><th>Day</th><th>Intensity</th><th>Monotony</th><th>Comment</th></tr></thead>
+    <tbody id="dayBody"></tbody>
+  </table>
+</div>
+
+<hr class="divider">
+<p class="section-label">Full camp overview</p>
+
+<div class="stats-grid">
+  <div class="stat"><p class="stat-label">Total sessions</p><p class="stat-value" id="c-sessions">—</p></div>
+  <div class="stat"><p class="stat-label">Total training time</p><p class="stat-value" id="c-time">—</p></div>
+  <div class="stat"><p class="stat-label">Active days</p><p class="stat-value" id="c-active">—</p></div>
+  <div class="stat"><p class="stat-label">Avg intensity</p><p class="stat-value" id="c-intensity">—</p></div>
+</div>
+
+<div class="chart-full">
+  <p class="chart-label">Intensity & monotony — all weeks</p>
+  <div class="legend">
+    <span><span class="legend-dot" style="background:#3266ad"></span>Intensity</span>
+    <span><span class="legend-dot" style="background:#D4537E"></span>Monotony</span>
+  </div>
+  <div style="position:relative;width:100%;height:160px;">
+    <canvas id="overviewChart"></canvas>
+  </div>
+</div>
+
+<script>
+const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRIfRZQo9reCvUfRrfGVxawAu5nWB8dgvYiVQDX9pSx6fMXy-lmS-uyHBxX4JlFYQ/pub?output=csv';
+
+const textColor = '#888780';
+const gridColor = 'rgba(255,255,255,0.07)';
+const weekBgColors = [
+  'rgba(50,102,173,0.12)', 'rgba(29,158,117,0.12)', 'rgba(212,83,126,0.12)',
+  'rgba(186,117,23,0.12)', 'rgba(83,74,183,0.12)', 'rgba(50,173,100,0.12)',
+  'rgba(173,100,50,0.12)', 'rgba(100,50,173,0.12)'
+];
+
+let weeks = [];
+let currentWeek = 0;
+let comboChart, overviewChart;
+
+function parseCSV(text) {
+  const lines = text.trim().split('\n').map(l => l.split(',').map(c => c.trim().replace(/^"|"$/g, '')));
+  const header = lines[0];
+  return lines.slice(1).map(row => {
+    const obj = {};
+    header.forEach((h, i) => obj[h] = row[i] || '');
+    return obj;
+  });
+}
+
+function dayAbbr(weekday) {
+  const map = { Mon:'Mon', Tue:'Tue', Wed:'Wed', Thu:'Thu', Fri:'Fri', Sat:'Sat', Sun:'Sun' };
+  return map[weekday] || weekday;
+}
+
+function excelDateToDisplay(serial) {
+  if (!serial || isNaN(serial)) return serial;
+  const date = new Date(Math.round((serial - 25569) * 86400 * 1000));
+  const d = String(date.getUTCDate()).padStart(2, '0');
+  const m = String(date.getUTCMonth() + 1).padStart(2, '0');
+  return `${d}/${m}`;
+}
+
+function buildWeeks(rows) {
+  const dayOrder = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+  const result = [];
+  let current = [];
+
+  rows.forEach(row => {
+    const weekday = (row['Weekday'] || '').trim();
+    const dateRaw = (row['Date'] || '').trim();
+    const intensity = parseFloat(row['Intensity']) || 0;
+    const time = parseFloat(row['Training Time']) || 0;
+    const monotony = row['Monotony'] && row['Monotony'] !== '-' && row['Monotony'] !== '' ? parseFloat(row['Monotony']) : null;
+    const comment = (row['Comment'] || '').trim();
+
+    const dateStr = isNaN(dateRaw) ? dateRaw : excelDateToDisplay(parseFloat(dateRaw));
+
+    if (weekday === 'Mon' && current.length > 0) {
+      result.push(current);
+      current = [];
+    }
+
+    current.push({ day: dayAbbr(weekday), date: dateStr, intensity, time, monotony, comment });
+  });
+
+  if (current.length > 0) result.push(current);
+  return result;
+}
+
+function isActive(d) { return d.comment !== 'Day off'; }
+
+function formatTime(totalMins) {
+  const hrs = Math.floor(totalMins / 60), mins = totalMins % 60;
+  return mins > 0
+    ? `${hrs}<span class="stat-unit">h</span> ${mins}<span class="stat-unit">m</span>`
+    : `${hrs}<span class="stat-unit">h</span>`;
+}
+
+function buildStats(data, prefix) {
+  const active = data.filter(isActive);
+  const totalSessions = active.length;
+  const totalTime = active.reduce((s, d) => s + d.time, 0);
+  const avgInt = totalSessions > 0 ? (active.reduce((s, d) => s + d.intensity, 0) / totalSessions).toFixed(1) : '—';
+  document.getElementById(`${prefix}-sessions`).innerHTML = totalSessions;
+  document.getElementById(`${prefix}-time`).innerHTML = formatTime(totalTime);
+  document.getElementById(`${prefix}-active`).innerHTML = `${totalSessions}<span class="stat-unit"> / ${data.length}</span>`;
+  document.getElementById(`${prefix}-intensity`).innerHTML = avgInt;
+}
+
+function buildWeekButtons() {
+  const container = document.getElementById('weekBtns');
+  container.innerHTML = '';
+  weeks.forEach((_, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'wbtn' + (i === currentWeek ? ' active' : '');
+    btn.textContent = `Week ${i + 1}`;
+    btn.onclick = () => showWeek(i);
+    container.appendChild(btn);
+  });
+}
+
+function buildWeekChart(wIdx) {
+  const data = weeks[wIdx];
+  const labels = data.map(d => `${d.day} ${d.date}`);
+  if (comboChart) comboChart.destroy();
+  comboChart = new Chart(document.getElementById('comboChart'), {
+    type: 'line',
+    data: {
+      labels,
+      datasets: [
+        {
+          label: 'Intensity', data: data.map(d => d.intensity),
+          borderColor: '#3266ad', backgroundColor: weekBgColors[wIdx % weekBgColors.length],
+          borderWidth: 2, pointRadius: 4, pointHoverRadius: 6, tension: 0.3, fill: true, yAxisID: 'y'
+        },
+        {
+          label: 'Monotony', data: data.map(d => d.monotony),
+          borderColor: '#D4537E', backgroundColor: 'transparent',
+          borderWidth: 2, borderDash: [5, 3], pointRadius: 4, pointHoverRadius: 6,
+          tension: 0.3, fill: false, spanGaps: false, yAxisID: 'y2'
+        }
+      ]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false }, tooltip: { callbacks: { label: ctx => ctx.datasetIndex === 0 ? ` Intensity: ${ctx.raw}` : ctx.raw !== null ? ` Monotony: ${Number(ctx.raw).toFixed(2)}` : ' No data' } } },
+      scales: {
+        x: { ticks: { color: textColor, font: { size: 11 }, maxRotation: 0 }, grid: { color: gridColor } },
+        y: { min: 0, max: 10, ticks: { color: textColor, font: { size: 11 } }, grid: { color: gridColor }, title: { display: true, text: 'Intensity', color: textColor, font: { size: 11 } } },
+        y2: { position: 'right', min: 0, max: 2.5, ticks: { color: textColor, font: { size: 11 } }, grid: { drawOnChartArea: false }, title: { display: true, text: 'Monotony', color: textColor, font: { size: 11 } } }
+      }
+    }
+  });
+}
+
+function buildOverviewChart() {
+  const allData = weeks.flat();
+  const labels = allData.map(d => `${d.day} ${d.date}`);
+  if (overviewChart) overviewChart.destroy();
+  overviewChart = new Chart(document.getElementById('overviewChart'), {
+    type: 'line',
+    data: {
+      labels,
+      datasets: [
+        {
+          label: 'Intensity', data: allData.map(d => d.intensity),
+          borderColor: '#3266ad', backgroundColor: 'rgba(50,102,173,0.08)',
+          borderWidth: 1.5, pointRadius: 2, pointHoverRadius: 4, tension: 0.3, fill: true, yAxisID: 'y'
+        },
+        {
+          label: 'Monotony', data: allData.map(d => d.monotony),
+          borderColor: '#D4537E', backgroundColor: 'transparent',
+          borderWidth: 1.5, borderDash: [4, 3], pointRadius: 2, pointHoverRadius: 4,
+          tension: 0.3, fill: false, spanGaps: false, yAxisID: 'y2'
+        }
+      ]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false }, tooltip: { callbacks: { label: ctx => ctx.datasetIndex === 0 ? ` Intensity: ${ctx.raw}` : ctx.raw !== null ? ` Monotony: ${Number(ctx.raw).toFixed(2)}` : ' No data' } } },
+      scales: {
+        x: { ticks: { color: textColor, font: { size: 9 }, maxRotation: 45, autoSkip: true, maxTicksLimit: 18 }, grid: { color: gridColor } },
+        y: { min: 0, max: 10, ticks: { color: textColor, font: { size: 10 } }, grid: { color: gridColor }, title: { display: true, text: 'Intensity', color: textColor, font: { size: 10 } } },
+        y2: { position: 'right', min: 0, max: 2.5, ticks: { color: textColor, font: { size: 10 } }, grid: { drawOnChartArea: false }, title: { display: true, text: 'Monotony', color: textColor, font: { size: 10 } } }
+      }
+    }
+  });
+}
+
+function buildTable(wIdx) {
+  const tbody = document.getElementById('dayBody');
+  tbody.innerHTML = '';
+  weeks[wIdx].forEach(d => {
+    const cb = d.comment === 'Day off'
+      ? `<span class="badge badge-off">Day off</span>`
+      : d.comment === '5v5' || d.comment === 'Žaidimai' || d.comment === 'Zaidimai'
+        ? `<span class="badge badge-game">${d.comment}</span>`
+        : d.comment ? `<span class="badge badge-note">${d.comment}</span>`
+        : '<span style="color:#555552;font-size:12px;">—</span>';
+    const mv = d.monotony !== null ? Number(d.monotony).toFixed(2) : '<span style="color:#555552;font-size:12px;">—</span>';
+    tbody.innerHTML += `<tr>
+      <td style="font-weight:500;">${d.date}</td>
+      <td style="color:#888780;">${d.day}</td>
+      <td>${d.intensity}</td>
+      <td>${mv}</td>
+      <td>${cb}</td>
+    </tr>`;
+  });
+}
+
+function showWeek(wIdx) {
+  currentWeek = wIdx;
+  document.querySelectorAll('.wbtn').forEach((b, i) => b.classList.toggle('active', i === wIdx));
+  document.getElementById('comboLabel').textContent = `Intensity & monotony — Week ${wIdx + 1}`;
+  buildStats(weeks[wIdx], 's');
+  buildWeekChart(wIdx);
+  buildTable(wIdx);
+}
+
+function renderAll() {
+  const allData = weeks.flat();
+  document.getElementById('campSub').textContent = `${weeks.length} weeks`;
+  buildWeekButtons();
+  buildStats(allData, 'c');
+  buildOverviewChart();
+  showWeek(0);
+}
+
+async function loadData() {
+  const btn = document.getElementById('refreshBtn');
+  const status = document.getElementById('statusBar');
+  btn.classList.add('loading');
+  status.className = 'status-bar';
+  status.textContent = 'Fetching latest data from Google Sheets…';
+
+  try {
+    const res = await fetch(CSV_URL);
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const text = await res.text();
+    const rows = parseCSV(text);
+    weeks = buildWeeks(rows);
+    if (weeks.length === 0) throw new Error('No data found in sheet');
+    renderAll();
+    const now = new Date().toLocaleTimeString();
+    status.className = 'status-bar ok';
+    status.textContent = `✓ Last updated ${now}`;
+  } catch (err) {
+    status.className = 'status-bar error';
+    status.textContent = `✗ Could not load data: ${err.message}`;
+  } finally {
+    btn.classList.remove('loading');
+  }
+}
+
+loadData();
+</script>
+</body>
+</html>
