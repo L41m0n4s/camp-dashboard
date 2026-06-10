@@ -173,8 +173,14 @@ function parseCSV(text) {
     result.push(cur.trim());
     return result;
   }
-  const headers = splitLine(lines[0]);
-  return { headers, rows: lines.slice(1).map(l => splitLine(l)) };
+  // Skip empty rows at top to find the real header row
+  let headerIdx = 0;
+  for (let i = 0; i < lines.length; i++) {
+    const cols = splitLine(lines[i]);
+    if (cols.some(c => c.trim() !== '')) { headerIdx = i; break; }
+  }
+  const headers = splitLine(lines[headerIdx]);
+  return { headers, rows: lines.slice(headerIdx + 1).map(l => splitLine(l)) };
 }
 
 // Convert Excel serial date → DD/MM
@@ -237,7 +243,7 @@ function buildWeeks(headers, rows) {
 
   dbg.textContent += `\nWeeks parsed: ${result.length}, total rows: ${result.flat().length}`;
   // Hide debug after 8s
-  
+  setTimeout(() => { dbg.style.display = 'none'; }, 8000);
 
   return result;
 }
