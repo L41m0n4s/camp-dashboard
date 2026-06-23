@@ -213,7 +213,7 @@
 <div class="chart-full" id="commentBlock">
   <p class="chart-label">Comments</p>
   <table class="comment-table">
-    <thead><tr><th>Player</th><th>Comment</th></tr></thead>
+    <thead><tr><th>Date</th><th>Player</th><th>Comment</th></tr></thead>
     <tbody id="commentBody"></tbody>
   </table>
 </div>
@@ -494,7 +494,8 @@ function renderWellness() {
   const today = new Date();
   const todayKey = formatDateKey(today);
   const isToday = targetKey === todayKey;
-  const label = isToday ? 'Today' : target.toLocaleDateString('en-GB', {day:'2-digit', month:'2-digit', year:'numeric'});
+  const dateStr = target.toLocaleDateString('en-GB', {day:'2-digit', month:'2-digit', year:'numeric'});
+  const label = isToday ? `Today — ${dateStr}` : `Previous day — ${dateStr}`;
   document.getElementById('dayLabel').textContent = label;
   document.getElementById('nextDayBtn').disabled = isToday;
 
@@ -538,7 +539,11 @@ function renderWellness() {
     const name = (row[2]||'').trim();
     const comment = (row[6]||'').trim();
     if (!comment) return;
-    tbody.innerHTML += `<tr><td style="font-weight:500;white-space:nowrap;">${name}</td><td style="color:#c8c6c0;">${comment}</td></tr>`;
+    const ts = (row[0]||'').trim();
+    const datePart = ts.split(' ')[0];
+    const dt = new Date(datePart);
+    const displayDate = `${String(dt.getDate()).padStart(2,'0')}/${String(dt.getMonth()+1).padStart(2,'0')}/${dt.getFullYear()}`;
+    tbody.innerHTML += `<tr><td style="color:#888780;white-space:nowrap;">${displayDate}</td><td style="font-weight:500;white-space:nowrap;">${name}</td><td style="color:#c8c6c0;">${comment}</td></tr>`;
   });
   document.getElementById('commentBlock').style.display = tbody.innerHTML ? '' : 'none';
 
