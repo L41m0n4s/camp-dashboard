@@ -10,8 +10,10 @@
   body {
     background: #111110; color: #e8e6e0;
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
-    font-size: 16px; line-height: 1.5; padding: 2rem; max-width: 860px; margin: 0 auto;
+    font-size: 16px; line-height: 1.5; padding: 2rem; max-width: 900px; margin: 0 auto;
   }
+
+  /* HEADER */
   .camp-header {
     padding: 1.5rem 0 1rem; border-bottom: 0.5px solid rgba(255,255,255,0.12);
     margin-bottom: 1.5rem; display: flex; align-items: center; justify-content: space-between;
@@ -22,33 +24,42 @@
     display: flex; align-items: center; gap: 6px; background: #1a1a18;
     border: 0.5px solid rgba(255,255,255,0.2); border-radius: 8px; padding: 7px 14px;
     font-size: 13px; color: #c8c6c0; cursor: pointer; font-family: inherit;
-    transition: background 0.15s, color 0.15s; flex-shrink: 0;
+    transition: background 0.15s; flex-shrink: 0;
   }
   .refresh-btn:hover { background: #242422; color: #e8e6e0; }
   .refresh-btn.loading { opacity: 0.5; pointer-events: none; }
-  .refresh-icon { font-size: 15px; display: inline-block; }
-  .refresh-btn.loading .refresh-icon { animation: spin 0.8s linear infinite; }
+  .refresh-icon { font-size: 15px; }
+  .refresh-btn.loading .refresh-icon { animation: spin 0.8s linear infinite; display: inline-block; }
   @keyframes spin { to { transform: rotate(360deg); } }
+
   .status-bar { font-size: 11px; color: #555552; margin-bottom: 1.25rem; min-height: 16px; }
   .status-bar.error { color: #D4537E; }
   .status-bar.ok { color: #1D9E75; }
+
   .section-label {
     font-size: 11px; font-weight: 500; color: #888780;
     letter-spacing: 0.06em; text-transform: uppercase; margin: 0 0 10px;
   }
+  .divider { border: none; border-top: 0.5px solid rgba(255,255,255,0.1); margin: 1.5rem 0; }
+
+  /* WEEK BUTTONS */
   .week-btns { display: flex; gap: 8px; margin-bottom: 1.25rem; flex-wrap: wrap; }
   .wbtn {
     background: #1a1a18; border: 0.5px solid rgba(255,255,255,0.2); border-radius: 8px;
-    padding: 6px 18px; font-size: 13px; color: #888780; cursor: pointer;
-    transition: background 0.15s, color 0.15s; font-family: inherit;
+    padding: 6px 18px; font-size: 13px; color: #888780; cursor: pointer; font-family: inherit;
+    transition: background 0.15s;
   }
   .wbtn:hover { background: #242422; color: #c8c6c0; }
   .wbtn.active { background: #242422; border-color: rgba(255,255,255,0.35); color: #e8e6e0; font-weight: 500; }
+
+  /* STAT CARDS */
   .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 1.25rem; }
   .stat { background: #1a1a18; border-radius: 8px; padding: 1rem; }
   .stat-label { font-size: 12px; color: #888780; margin: 0 0 4px; }
   .stat-value { font-size: 22px; font-weight: 500; color: #e8e6e0; margin: 0; }
   .stat-unit { font-size: 13px; font-weight: 400; color: #888780; }
+
+  /* CHART BLOCKS */
   .chart-full {
     background: #1a1a18; border: 0.5px solid rgba(255,255,255,0.1);
     border-radius: 12px; padding: 1rem 1.25rem; margin-bottom: 1.25rem;
@@ -56,6 +67,8 @@
   .chart-label { font-size: 13px; font-weight: 500; color: #e8e6e0; margin: 0 0 10px; }
   .legend { display: flex; gap: 14px; margin-bottom: 10px; font-size: 12px; color: #888780; }
   .legend-dot { width: 10px; height: 10px; border-radius: 2px; display: inline-block; margin-right: 4px; vertical-align: middle; }
+
+  /* TABLE */
   .day-table { width: 100%; border-collapse: collapse; font-size: 13px; }
   .day-table th {
     text-align: left; color: #888780; font-weight: 500; font-size: 11px;
@@ -67,32 +80,60 @@
   }
   .day-table tr:last-child td { border-bottom: none; }
   .day-table tr:hover td { background: rgba(255,255,255,0.04); }
+
   .badge { display: inline-block; font-size: 11px; padding: 2px 8px; border-radius: 4px; font-weight: 500; }
   .badge-off { background: rgba(255,255,255,0.08); color: #888780; }
   .badge-note { background: rgba(50,102,173,0.25); color: #85B7EB; }
   .badge-game { background: rgba(186,117,23,0.25); color: #FAC775; }
-  .divider { border: none; border-top: 0.5px solid rgba(255,255,255,0.1); margin: 1.5rem 0; }
-  #debugBox {
-    background: #1a1a18; border: 0.5px solid rgba(255,255,255,0.15); border-radius: 8px;
-    padding: 1rem; font-size: 11px; color: #888780; white-space: pre-wrap;
-    margin-bottom: 1rem; display: none;
+
+  /* WELLNESS SECTION */
+  .day-nav {
+    display: flex; align-items: center; gap: 12px; margin-bottom: 1.25rem;
   }
+  .day-nav-btn {
+    background: #1a1a18; border: 0.5px solid rgba(255,255,255,0.2); border-radius: 8px;
+    padding: 6px 14px; font-size: 13px; color: #888780; cursor: pointer; font-family: inherit;
+    transition: background 0.15s;
+  }
+  .day-nav-btn:hover { background: #242422; color: #e8e6e0; }
+  .day-nav-btn:disabled { opacity: 0.3; pointer-events: none; }
+  .day-label { font-size: 14px; font-weight: 500; color: #e8e6e0; }
+
+  .pie-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-bottom: 1.25rem; }
+  .pie-block {
+    background: #1a1a18; border: 0.5px solid rgba(255,255,255,0.1);
+    border-radius: 12px; padding: 1rem 1.25rem;
+  }
+  .pie-label { font-size: 13px; font-weight: 500; color: #e8e6e0; margin: 0 0 10px; text-align: center; }
+
+  .comment-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .comment-table th {
+    text-align: left; color: #888780; font-weight: 500; font-size: 11px;
+    padding: 4px 8px; border-bottom: 0.5px solid rgba(255,255,255,0.1);
+  }
+  .comment-table td {
+    padding: 6px 8px; border-bottom: 0.5px solid rgba(255,255,255,0.07);
+    color: #e8e6e0; vertical-align: top;
+  }
+  .comment-table tr:last-child td { border-bottom: none; }
+  .comment-table tr:hover td { background: rgba(255,255,255,0.04); }
+
+  .no-data { color: #555552; font-size: 13px; padding: 1rem 0; }
 </style>
 </head>
 <body>
 
+<!-- ═══════════════════════════════════════════════ TRAINING SECTION -->
 <div class="camp-header">
   <div>
     <p class="camp-title">Rihards — skills camp training plan</p>
     <p class="camp-sub" id="campSub">5 weeks</p>
   </div>
-  <button class="refresh-btn" id="refreshBtn" onclick="loadData()">
+  <button class="refresh-btn" id="refreshBtn" onclick="loadAll()">
     <span class="refresh-icon">↻</span> Refresh
   </button>
 </div>
-
 <div class="status-bar" id="statusBar">Loading…</div>
-<div id="debugBox"></div>
 
 <p class="section-label">Weekly detail</p>
 <div class="week-btns" id="weekBtns"></div>
@@ -110,9 +151,7 @@
     <span><span class="legend-dot" style="background:#3266ad"></span>Intensity</span>
     <span><span class="legend-dot" style="background:#D4537E"></span>Monotony</span>
   </div>
-  <div style="position:relative;width:100%;height:240px;">
-    <canvas id="comboChart"></canvas>
-  </div>
+  <div style="position:relative;width:100%;height:240px;"><canvas id="comboChart"></canvas></div>
 </div>
 
 <div class="chart-full">
@@ -125,27 +164,73 @@
 
 <hr class="divider">
 <p class="section-label">Full camp overview</p>
-
 <div class="stats-grid">
   <div class="stat"><p class="stat-label">Total sessions</p><p class="stat-value" id="c-sessions">—</p></div>
   <div class="stat"><p class="stat-label">Total training time</p><p class="stat-value" id="c-time">—</p></div>
   <div class="stat"><p class="stat-label">Active days</p><p class="stat-value" id="c-active">—</p></div>
   <div class="stat"><p class="stat-label">Avg intensity</p><p class="stat-value" id="c-intensity">—</p></div>
 </div>
-
 <div class="chart-full">
   <p class="chart-label">Intensity & monotony — all weeks</p>
   <div class="legend">
     <span><span class="legend-dot" style="background:#3266ad"></span>Intensity</span>
     <span><span class="legend-dot" style="background:#D4537E"></span>Monotony</span>
   </div>
-  <div style="position:relative;width:100%;height:160px;">
-    <canvas id="overviewChart"></canvas>
+  <div style="position:relative;width:100%;height:160px;"><canvas id="overviewChart"></canvas></div>
+</div>
+
+<!-- ═══════════════════════════════════════════════ WELLNESS SECTION -->
+<hr class="divider">
+<p class="section-label">Player wellness</p>
+<div class="status-bar" id="wellnessStatus"></div>
+
+<div class="day-nav">
+  <button class="day-nav-btn" id="prevDayBtn" onclick="shiftDay(-1)">← Previous day</button>
+  <span class="day-label" id="dayLabel">Today</span>
+  <button class="day-nav-btn" id="nextDayBtn" onclick="shiftDay(1)" disabled>Today →</button>
+</div>
+
+<div class="pie-grid">
+  <div class="pie-block">
+    <p class="pie-label">Nuovargis</p>
+    <div style="position:relative;height:200px;"><canvas id="pieNuovargis"></canvas></div>
+  </div>
+  <div class="pie-block">
+    <p class="pie-label">Raumenų skausmas</p>
+    <div style="position:relative;height:200px;"><canvas id="pieSkausmas"></canvas></div>
+  </div>
+  <div class="pie-block">
+    <p class="pie-label">Miegas</p>
+    <div style="position:relative;height:200px;"><canvas id="pieMiegas"></canvas></div>
   </div>
 </div>
 
+<div class="chart-full">
+  <p class="chart-label">Bendra savijauta — weekly average</p>
+  <div style="position:relative;width:100%;height:200px;"><canvas id="savijautaChart"></canvas></div>
+</div>
+
+<div class="chart-full" id="commentBlock">
+  <p class="chart-label">Comments</p>
+  <table class="comment-table">
+    <thead><tr><th>Player</th><th>Comment</th></tr></thead>
+    <tbody id="commentBody"></tbody>
+  </table>
+</div>
+
 <script>
-const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRIfRZQo9reCvUfRrfGVxawAu5nWB8dgvYiVQDX9pSx6fMXy-lmS-uyHBxX4JlFYQ/pub?output=csv';
+// ─── CONFIG ───────────────────────────────────────────────────────────────────
+const TRAINING_CSV = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRIfRZQo9reCvUfRrfGVxawAu5nWB8dgvYiVQDX9pSx6fMXy-lmS-uyHBxX4JlFYQ/pub?output=csv';
+const WELLNESS_CSV = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSJoj78ekwxpFWwYw2lSZKW3coKVHix8Zy4e6o8_1tcpyGXN3KVsM0t7lmHn6PTvpXKRoDOk_by0zLO/pub?output=csv';
+
+// Color scale: 1=red, 2=orange, 3=yellow, 4=lime, 5=green
+const SCORE_COLORS = {
+  1: '#D4537E',
+  2: '#E8864A',
+  3: '#E8C84A',
+  4: '#8DC85A',
+  5: '#1D9E75'
+};
 
 const textColor = '#888780';
 const gridColor = 'rgba(255,255,255,0.07)';
@@ -154,16 +239,17 @@ const weekBgColors = [
   'rgba(186,117,23,0.12)','rgba(83,74,183,0.12)','rgba(50,173,100,0.12)',
 ];
 
-let weeks = [];
-let currentWeek = 0;
+let weeks = [], currentWeek = 0;
 let comboChart, overviewChart;
+let pieNuovargis, pieSkausmas, pieMiegas, savijautaChart;
+let wellnessRows = [];
+let dayOffset = 0; // 0 = today, -1 = yesterday, etc.
 
-// Parse CSV respecting quoted fields
+// ─── CSV PARSER ───────────────────────────────────────────────────────────────
 function parseCSV(text) {
   const lines = text.trim().split(/\r?\n/);
   function splitLine(line) {
-    const result = [];
-    let cur = '', inQ = false;
+    const result = []; let cur = '', inQ = false;
     for (let i = 0; i < line.length; i++) {
       const ch = line[i];
       if (ch === '"') { inQ = !inQ; }
@@ -177,85 +263,56 @@ function parseCSV(text) {
   return { headers, rows: lines.slice(1).map(l => splitLine(l)) };
 }
 
-// Convert Excel serial date → DD/MM
+// ─── TRAINING HELPERS ─────────────────────────────────────────────────────────
 function excelToDate(serial) {
   const n = parseFloat(serial);
   if (isNaN(n)) return serial;
   const date = new Date(Math.round((n - 25569) * 86400 * 1000));
-  const d = String(date.getUTCDate()).padStart(2, '0');
-  const m = String(date.getUTCMonth() + 1).padStart(2, '0');
-  return `${d}/${m}`;
+  return `${String(date.getUTCDate()).padStart(2,'0')}/${String(date.getUTCMonth()+1).padStart(2,'0')}`;
 }
 
-function parseFloat2(v) {
-  const n = parseFloat((v || '').replace(',', '.'));
-  return isNaN(n) ? null : n;
-}
+function pf(v) { const n = parseFloat((v||'').replace(',','.')); return isNaN(n) ? null : n; }
 
 function buildWeeks(headers, rows) {
-  // Find column indices by name (case-insensitive, trimmed)
   const h = headers.map(x => x.toLowerCase().trim());
   const iDate     = h.findIndex(x => x === 'date');
   const iWeekday  = h.findIndex(x => x === 'weekday');
   const iIntensity= h.findIndex(x => x === 'intensity');
-  const iTime     = h.findIndex(x => x.includes('training time') || x === 'training time');
+  const iTime     = h.findIndex(x => x.includes('training time'));
   const iMonotony = h.findIndex(x => x === 'monotony');
   const iComment  = h.findIndex(x => x === 'comment');
 
-  // Show debug info
-  const dbg = document.getElementById('debugBox');
-  dbg.style.display = 'block';
-  dbg.textContent = `Headers found: ${JSON.stringify(headers)}\n`
-    + `Col indices → date:${iDate} weekday:${iWeekday} intensity:${iIntensity} time:${iTime} monotony:${iMonotony} comment:${iComment}\n`
-    + `First data row: ${JSON.stringify(rows[0])}`;
-
-  const result = [];
-  let current = [];
-
+  const result = []; let current = [];
   rows.forEach(row => {
     if (!row || row.length < 2) return;
-    const weekday = (row[iWeekday] || '').trim();
+    const weekday = (row[iWeekday]||'').trim();
     if (!weekday) return;
-
-    const dateRaw = (row[iDate] || '').trim();
-    const dateStr = /^\d+$/.test(dateRaw) ? excelToDate(dateRaw) : dateRaw;
-
-    const intensity = parseFloat2(row[iIntensity]) ?? 0;
-    const time      = parseFloat2(row[iTime]) ?? 0;
-    const monRaw    = iMonotony >= 0 ? (row[iMonotony] || '').trim() : '';
-    const monotony  = (monRaw === '' || monRaw === '-') ? null : parseFloat2(monRaw);
-    const comment   = iComment >= 0 ? (row[iComment] || '').trim() : '';
-
-    if (weekday === 'Mon' && current.length > 0) {
-      result.push(current);
-      current = [];
-    }
+    const dateRaw = (row[iDate]||'').trim();
+    const dateStr = /^\d+(\.\d+)?$/.test(dateRaw) ? excelToDate(dateRaw) : dateRaw;
+    const intensity = pf(row[iIntensity]) ?? 0;
+    const time      = pf(row[iTime]) ?? 0;
+    const monRaw    = iMonotony >= 0 ? (row[iMonotony]||'').trim() : '';
+    const monotony  = (monRaw===''||monRaw==='-') ? null : pf(monRaw);
+    const comment   = iComment >= 0 ? (row[iComment]||'').trim() : '';
+    if (weekday === 'Mon' && current.length > 0) { result.push(current); current = []; }
     current.push({ day: weekday, date: dateStr, intensity, time, monotony, comment });
   });
-
   if (current.length > 0) result.push(current);
-
-  dbg.textContent += `\nWeeks parsed: ${result.length}, total rows: ${result.flat().length}`;
-  // Hide debug after 8s
-  setTimeout(() => { dbg.style.display = 'none'; }, 8000);
-
   return result;
 }
 
 function isActive(d) { return d.comment !== 'Day off'; }
 
 function formatTime(totalMins) {
-  const hrs = Math.floor(totalMins / 60), mins = totalMins % 60;
-  return mins > 0
-    ? `${hrs}<span class="stat-unit">h</span> ${mins}<span class="stat-unit">m</span>`
-    : `${hrs}<span class="stat-unit">h</span>`;
+  const hrs = Math.floor(totalMins/60), mins = totalMins%60;
+  return mins > 0 ? `${hrs}<span class="stat-unit">h</span> ${mins}<span class="stat-unit">m</span>` : `${hrs}<span class="stat-unit">h</span>`;
 }
 
 function buildStats(data, prefix) {
   const active = data.filter(isActive);
   const n = active.length;
-  const totalTime = active.reduce((s, d) => s + d.time, 0);
-  const avgInt = n > 0 ? (active.reduce((s, d) => s + d.intensity, 0) / n).toFixed(1) : '—';
+  const totalTime = active.reduce((s,d) => s+d.time, 0);
+  const avgInt = n > 0 ? (active.reduce((s,d) => s+d.intensity,0)/n).toFixed(1) : '—';
   document.getElementById(`${prefix}-sessions`).innerHTML = n;
   document.getElementById(`${prefix}-time`).innerHTML = formatTime(totalTime);
   document.getElementById(`${prefix}-active`).innerHTML = `${n}<span class="stat-unit"> / ${data.length}</span>`;
@@ -263,50 +320,31 @@ function buildStats(data, prefix) {
 }
 
 function buildWeekButtons() {
-  const container = document.getElementById('weekBtns');
-  container.innerHTML = '';
-  weeks.forEach((_, i) => {
+  const c = document.getElementById('weekBtns'); c.innerHTML = '';
+  weeks.forEach((_,i) => {
     const btn = document.createElement('button');
-    btn.className = 'wbtn' + (i === currentWeek ? ' active' : '');
-    btn.textContent = `Week ${i + 1}`;
+    btn.className = 'wbtn' + (i===currentWeek?' active':'');
+    btn.textContent = `Week ${i+1}`;
     btn.onclick = () => showWeek(i);
-    container.appendChild(btn);
+    c.appendChild(btn);
   });
 }
 
 function buildWeekChart(wIdx) {
   const data = weeks[wIdx];
-  const labels = data.map(d => `${d.day} ${d.date}`);
+  const labels = data.map(d=>`${d.day} ${d.date}`);
   if (comboChart) comboChart.destroy();
   comboChart = new Chart(document.getElementById('comboChart'), {
-    type: 'line',
-    data: {
-      labels,
-      datasets: [
-        {
-          label: 'Intensity', data: data.map(d => d.intensity),
-          borderColor: '#3266ad', backgroundColor: weekBgColors[wIdx % weekBgColors.length],
-          borderWidth: 2, pointRadius: 4, pointHoverRadius: 6, tension: 0.3, fill: true, yAxisID: 'y'
-        },
-        {
-          label: 'Monotony', data: data.map(d => d.monotony),
-          borderColor: '#D4537E', backgroundColor: 'transparent',
-          borderWidth: 2, borderDash: [5,3], pointRadius: 4, pointHoverRadius: 6,
-          tension: 0.3, fill: false, spanGaps: false, yAxisID: 'y2'
-        }
-      ]
-    },
-    options: {
-      responsive: true, maintainAspectRatio: false,
-      plugins: { legend: { display: false }, tooltip: { callbacks: {
-        label: ctx => ctx.datasetIndex === 0
-          ? ` Intensity: ${ctx.raw}`
-          : ctx.raw !== null ? ` Monotony: ${Number(ctx.raw).toFixed(2)}` : ' No data'
-      }}},
-      scales: {
-        x: { ticks: { color: textColor, font: { size: 11 }, maxRotation: 0 }, grid: { color: gridColor } },
-        y: { min: 0, max: 10, ticks: { color: textColor, font: { size: 11 } }, grid: { color: gridColor }, title: { display: true, text: 'Intensity', color: textColor, font: { size: 11 } } },
-        y2: { position: 'right', min: 0, max: 2.5, ticks: { color: textColor, font: { size: 11 } }, grid: { drawOnChartArea: false }, title: { display: true, text: 'Monotony', color: textColor, font: { size: 11 } } }
+    type:'line', data:{ labels, datasets:[
+      { label:'Intensity', data:data.map(d=>d.intensity), borderColor:'#3266ad', backgroundColor:weekBgColors[wIdx%weekBgColors.length], borderWidth:2, pointRadius:4, pointHoverRadius:6, tension:0.3, fill:true, yAxisID:'y' },
+      { label:'Monotony', data:data.map(d=>d.monotony), borderColor:'#D4537E', backgroundColor:'transparent', borderWidth:2, borderDash:[5,3], pointRadius:4, pointHoverRadius:6, tension:0.3, fill:false, spanGaps:false, yAxisID:'y2' }
+    ]},
+    options:{ responsive:true, maintainAspectRatio:false,
+      plugins:{ legend:{display:false}, tooltip:{callbacks:{label:ctx=>ctx.datasetIndex===0?` Intensity: ${ctx.raw}`:ctx.raw!==null?` Monotony: ${Number(ctx.raw).toFixed(2)}`:' No data'}}},
+      scales:{
+        x:{ticks:{color:textColor,font:{size:11},maxRotation:0},grid:{color:gridColor}},
+        y:{min:0,max:10,ticks:{color:textColor,font:{size:11}},grid:{color:gridColor},title:{display:true,text:'Intensity',color:textColor,font:{size:11}}},
+        y2:{position:'right',min:0,max:2.5,ticks:{color:textColor,font:{size:11}},grid:{drawOnChartArea:false},title:{display:true,text:'Monotony',color:textColor,font:{size:11}}}
       }
     }
   });
@@ -314,108 +352,259 @@ function buildWeekChart(wIdx) {
 
 function buildOverviewChart() {
   const allData = weeks.flat();
-  const labels = allData.map(d => `${d.day} ${d.date}`);
+  const labels = allData.map(d=>`${d.day} ${d.date}`);
   if (overviewChart) overviewChart.destroy();
   overviewChart = new Chart(document.getElementById('overviewChart'), {
-    type: 'line',
-    data: {
-      labels,
-      datasets: [
-        {
-          label: 'Intensity', data: allData.map(d => d.intensity),
-          borderColor: '#3266ad', backgroundColor: 'rgba(50,102,173,0.08)',
-          borderWidth: 1.5, pointRadius: 2, pointHoverRadius: 4, tension: 0.3, fill: true, yAxisID: 'y'
-        },
-        {
-          label: 'Monotony', data: allData.map(d => d.monotony),
-          borderColor: '#D4537E', backgroundColor: 'transparent',
-          borderWidth: 1.5, borderDash: [4,3], pointRadius: 2, pointHoverRadius: 4,
-          tension: 0.3, fill: false, spanGaps: false, yAxisID: 'y2'
-        }
-      ]
-    },
-    options: {
-      responsive: true, maintainAspectRatio: false,
-      plugins: { legend: { display: false }, tooltip: { callbacks: {
-        label: ctx => ctx.datasetIndex === 0
-          ? ` Intensity: ${ctx.raw}`
-          : ctx.raw !== null ? ` Monotony: ${Number(ctx.raw).toFixed(2)}` : ' No data'
-      }}},
-      scales: {
-        x: { ticks: { color: textColor, font: { size: 9 }, maxRotation: 45, autoSkip: true, maxTicksLimit: 18 }, grid: { color: gridColor } },
-        y: { min: 0, max: 10, ticks: { color: textColor, font: { size: 10 } }, grid: { color: gridColor }, title: { display: true, text: 'Intensity', color: textColor, font: { size: 10 } } },
-        y2: { position: 'right', min: 0, max: 2.5, ticks: { color: textColor, font: { size: 10 } }, grid: { drawOnChartArea: false }, title: { display: true, text: 'Monotony', color: textColor, font: { size: 10 } } }
+    type:'line', data:{ labels, datasets:[
+      { label:'Intensity', data:allData.map(d=>d.intensity), borderColor:'#3266ad', backgroundColor:'rgba(50,102,173,0.08)', borderWidth:1.5, pointRadius:2, pointHoverRadius:4, tension:0.3, fill:true, yAxisID:'y' },
+      { label:'Monotony', data:allData.map(d=>d.monotony), borderColor:'#D4537E', backgroundColor:'transparent', borderWidth:1.5, borderDash:[4,3], pointRadius:2, pointHoverRadius:4, tension:0.3, fill:false, spanGaps:false, yAxisID:'y2' }
+    ]},
+    options:{ responsive:true, maintainAspectRatio:false,
+      plugins:{ legend:{display:false} },
+      scales:{
+        x:{ticks:{color:textColor,font:{size:9},maxRotation:45,autoSkip:true,maxTicksLimit:18},grid:{color:gridColor}},
+        y:{min:0,max:10,ticks:{color:textColor,font:{size:10}},grid:{color:gridColor},title:{display:true,text:'Intensity',color:textColor,font:{size:10}}},
+        y2:{position:'right',min:0,max:2.5,ticks:{color:textColor,font:{size:10}},grid:{drawOnChartArea:false},title:{display:true,text:'Monotony',color:textColor,font:{size:10}}}
       }
     }
   });
 }
 
 function buildTable(wIdx) {
-  const tbody = document.getElementById('dayBody');
-  tbody.innerHTML = '';
+  const tbody = document.getElementById('dayBody'); tbody.innerHTML='';
   weeks[wIdx].forEach(d => {
-    const cb = d.comment === 'Day off'
-      ? `<span class="badge badge-off">Day off</span>`
-      : (d.comment === '5v5' || d.comment === 'Žaidimai' || d.comment === 'Zaidimai')
-        ? `<span class="badge badge-game">${d.comment}</span>`
-        : d.comment ? `<span class="badge badge-note">${d.comment}</span>`
-        : '<span style="color:#555552;font-size:12px;">—</span>';
-    const mv = d.monotony !== null ? Number(d.monotony).toFixed(2) : '<span style="color:#555552;font-size:12px;">—</span>';
-    tbody.innerHTML += `<tr>
-      <td style="font-weight:500;">${d.date}</td>
-      <td style="color:#888780;">${d.day}</td>
-      <td>${d.intensity}</td>
-      <td>${mv}</td>
-      <td>${cb}</td>
-    </tr>`;
+    const cb = d.comment==='Day off' ? `<span class="badge badge-off">Day off</span>`
+      : (d.comment==='5v5'||d.comment==='Žaidimai'||d.comment==='Zaidimai') ? `<span class="badge badge-game">${d.comment}</span>`
+      : d.comment ? `<span class="badge badge-note">${d.comment}</span>`
+      : '<span style="color:#555552;font-size:12px;">—</span>';
+    const mv = d.monotony!==null ? Number(d.monotony).toFixed(2) : '<span style="color:#555552;font-size:12px;">—</span>';
+    tbody.innerHTML += `<tr><td style="font-weight:500;">${d.date}</td><td style="color:#888780;">${d.day}</td><td>${d.intensity}</td><td>${mv}</td><td>${cb}</td></tr>`;
   });
 }
 
 function showWeek(wIdx) {
   currentWeek = wIdx;
-  document.querySelectorAll('.wbtn').forEach((b, i) => b.classList.toggle('active', i === wIdx));
-  document.getElementById('comboLabel').textContent = `Intensity & monotony — Week ${wIdx + 1}`;
-  buildStats(weeks[wIdx], 's');
+  document.querySelectorAll('.wbtn').forEach((b,i) => b.classList.toggle('active', i===wIdx));
+  document.getElementById('comboLabel').textContent = `Intensity & monotony — Week ${wIdx+1}`;
+  buildStats(weeks[wIdx],'s');
   buildWeekChart(wIdx);
   buildTable(wIdx);
 }
 
-function renderAll() {
-  const allData = weeks.flat();
-  document.getElementById('campSub').textContent = `${weeks.length} weeks`;
-  buildWeekButtons();
-  buildStats(allData, 'c');
-  buildOverviewChart();
-  showWeek(0);
+// ─── WELLNESS HELPERS ─────────────────────────────────────────────────────────
+// Parse "4 - some text" → 4
+function extractScore(val) {
+  if (!val) return null;
+  const m = val.match(/^(\d)/);
+  return m ? parseInt(m[1]) : null;
 }
 
-async function loadData() {
+// Format a Date as M/D/YYYY (matching Google Form timestamp format)
+function formatDateKey(date) {
+  return `${date.getMonth()+1}/${date.getDate()}/${date.getFullYear()}`;
+}
+
+function getTargetDate() {
+  const d = new Date();
+  d.setDate(d.getDate() + dayOffset);
+  return d;
+}
+
+function buildPieChart(canvasId, scores) {
+  const existing = Chart.getChart(canvasId);
+  if (existing) existing.destroy();
+
+  // Count occurrences of each score 1-5
+  const counts = {1:0, 2:0, 3:0, 4:0, 5:0};
+  scores.forEach(s => { if (s >= 1 && s <= 5) counts[s]++; });
+  const labels = [], data = [], colors = [];
+  [1,2,3,4,5].forEach(n => {
+    if (counts[n] > 0) {
+      labels.push(`${n}`);
+      data.push(counts[n]);
+      colors.push(SCORE_COLORS[n]);
+    }
+  });
+
+  if (data.length === 0) return;
+
+  new Chart(document.getElementById(canvasId), {
+    type: 'doughnut',
+    data: { labels, datasets: [{ data, backgroundColor: colors, borderWidth: 0, hoverOffset: 6 }] },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: {
+        legend: { display: true, position: 'bottom', labels: { color: textColor, font: { size: 11 }, boxWidth: 12, padding: 8 } },
+        tooltip: { callbacks: { label: ctx => ` Score ${ctx.label}: ${ctx.raw} player${ctx.raw>1?'s':''}` } }
+      }
+    }
+  });
+}
+
+function buildSavijautaChart(wellnessRows) {
+  // Group by date, calculate average Bendra Savijauta per day
+  const byDate = {};
+  wellnessRows.forEach(row => {
+    const ts = row[0]; // Timestamp col
+    if (!ts) return;
+    const date = ts.split(' ')[0]; // "6/23/2026"
+    const score = extractScore(row[10]); // BENDRA SAVIJAUTA col 10
+    if (score === null) return;
+    if (!byDate[date]) byDate[date] = [];
+    byDate[date].push(score);
+  });
+
+  const sortedDates = Object.keys(byDate).sort((a,b) => new Date(a)-new Date(b));
+  // Show last 7 days
+  const last7 = sortedDates.slice(-7);
+  const labels = last7.map(d => {
+    const dt = new Date(d);
+    return `${String(dt.getDate()).padStart(2,'0')}/${String(dt.getMonth()+1).padStart(2,'0')}`;
+  });
+  const avgs = last7.map(d => {
+    const arr = byDate[d];
+    return parseFloat((arr.reduce((s,v)=>s+v,0)/arr.length).toFixed(2));
+  });
+
+  if (savijautaChart) savijautaChart.destroy();
+  savijautaChart = new Chart(document.getElementById('savijautaChart'), {
+    type: 'line',
+    data: { labels, datasets: [{
+      label: 'Avg Bendra Savijauta',
+      data: avgs,
+      borderColor: '#1D9E75', backgroundColor: 'rgba(29,158,117,0.1)',
+      borderWidth: 2, pointRadius: 5, pointHoverRadius: 7, tension: 0.3, fill: true
+    }]},
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false }, tooltip: { callbacks: { label: ctx => ` Avg: ${ctx.raw}` } } },
+      scales: {
+        x: { ticks: { color: textColor, font: { size: 11 } }, grid: { color: gridColor } },
+        y: { min: 1, max: 5, ticks: { color: textColor, font: { size: 11 }, stepSize: 1 }, grid: { color: gridColor } }
+      }
+    }
+  });
+}
+
+function renderWellness() {
+  const target = getTargetDate();
+  const targetKey = formatDateKey(target);
+
+  // Update day label
+  const today = new Date();
+  const todayKey = formatDateKey(today);
+  const isToday = targetKey === todayKey;
+  const label = isToday ? 'Today' : target.toLocaleDateString('en-GB', {day:'2-digit', month:'2-digit', year:'numeric'});
+  document.getElementById('dayLabel').textContent = label;
+  document.getElementById('nextDayBtn').disabled = isToday;
+
+  // Filter rows for target date
+  const dayRows = wellnessRows.filter(row => {
+    const ts = row[0];
+    if (!ts) return false;
+    const rowDate = ts.split(' ')[0];
+    return rowDate === targetKey;
+  });
+
+  const status = document.getElementById('wellnessStatus');
+  if (dayRows.length === 0) {
+    status.className = 'status-bar error';
+    status.textContent = `No wellness data for ${label}`;
+    ['pieNuovargis','pieSkausmas','pieMiegas'].forEach(id => {
+      const ex = Chart.getChart(id); if (ex) ex.destroy();
+    });
+    document.getElementById('commentBody').innerHTML = '';
+    return;
+  }
+
+  status.className = 'status-bar ok';
+  status.textContent = `${dayRows.length} response${dayRows.length>1?'s':''} for ${label}`;
+
+  // Build pie charts — col indices from header:
+  // 0:Timestamp, 1:Score, 2:Vardas, 3:NUOVARGIS, 4:RAUMENŲ SKAUSMAS, 5:MIEGAS,
+  // 6:Comment, 7-9:empty cols, 10:BENDRA SAVIJAUTA
+  const nuovargisScores = dayRows.map(r => extractScore(r[3])).filter(Boolean);
+  const skausmasScores  = dayRows.map(r => extractScore(r[4])).filter(Boolean);
+  const miegasScores    = dayRows.map(r => extractScore(r[5])).filter(Boolean);
+
+  buildPieChart('pieNuovargis', nuovargisScores);
+  buildPieChart('pieSkausmas',  skausmasScores);
+  buildPieChart('pieMiegas',    miegasScores);
+
+  // Comments table
+  const tbody = document.getElementById('commentBody');
+  tbody.innerHTML = '';
+  dayRows.forEach(row => {
+    const name = (row[2]||'').trim();
+    const comment = (row[6]||'').trim();
+    if (!comment) return;
+    tbody.innerHTML += `<tr><td style="font-weight:500;white-space:nowrap;">${name}</td><td style="color:#c8c6c0;">${comment}</td></tr>`;
+  });
+  document.getElementById('commentBlock').style.display = tbody.innerHTML ? '' : 'none';
+
+  // Bendra Savijauta weekly line chart (all data)
+  buildSavijautaChart(wellnessRows);
+}
+
+function shiftDay(delta) {
+  dayOffset += delta;
+  if (dayOffset > 0) dayOffset = 0;
+  renderWellness();
+}
+
+// ─── LOAD ALL DATA ────────────────────────────────────────────────────────────
+async function loadAll() {
   const btn = document.getElementById('refreshBtn');
   const status = document.getElementById('statusBar');
   btn.classList.add('loading');
   status.className = 'status-bar';
-  status.textContent = 'Fetching latest data…';
+  status.textContent = 'Fetching data…';
 
+  await Promise.all([loadTraining(), loadWellness()]);
+  btn.classList.remove('loading');
+}
+
+async function loadTraining() {
+  const status = document.getElementById('statusBar');
   try {
-    const res = await fetch(CSV_URL);
+    const res = await fetch(TRAINING_CSV);
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const text = await res.text();
     const { headers, rows } = parseCSV(text);
     weeks = buildWeeks(headers, rows);
-    if (weeks.length === 0) throw new Error('No weeks found — check column headers in your sheet');
-    renderAll();
+    if (weeks.length === 0) throw new Error('No training data found');
+    document.getElementById('campSub').textContent = `${weeks.length} weeks`;
+    buildWeekButtons();
+    buildStats(weeks.flat(), 'c');
+    buildOverviewChart();
+    showWeek(0);
     const now = new Date().toLocaleTimeString();
     status.className = 'status-bar ok';
     status.textContent = `✓ Last updated ${now}`;
   } catch (err) {
     status.className = 'status-bar error';
-    status.textContent = `✗ ${err.message}`;
-  } finally {
-    btn.classList.remove('loading');
+    status.textContent = `✗ Training data: ${err.message}`;
   }
 }
 
-loadData();
+async function loadWellness() {
+  const status = document.getElementById('wellnessStatus');
+  status.className = 'status-bar';
+  status.textContent = 'Loading wellness data…';
+  try {
+    const res = await fetch(WELLNESS_CSV);
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const text = await res.text();
+    const { rows } = parseCSV(text);
+    wellnessRows = rows.filter(r => r[0]); // only rows with a timestamp
+    renderWellness();
+  } catch (err) {
+    status.className = 'status-bar error';
+    status.textContent = `✗ Wellness data: ${err.message}`;
+  }
+}
+
+loadAll();
 </script>
 </body>
 </html>
