@@ -699,7 +699,7 @@ function parseWorkoutCSV(csv) {
 
 function buildAthleteTabs() {
   document.getElementById('tabs-row').innerHTML = athletes.map(function(a){
-    return '<div class="tab" data-name="'+a.name+'" onclick="showAthlete(''+a.name+'')">'+a.name+'</div>';
+    return '<div class="tab" data-name="'+a.name+'" onclick="showAthlete(\'' + a.name + '\')" >'+a.name+'</div>';
   }).join('');
 }
 
