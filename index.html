@@ -1422,8 +1422,7 @@ function renderActivity(){
   buildDrillPies(tKey);
 
   // ── Day summary cards ──
-  var totalMin = 0, totalPC = 0, players = {}, types = {};
-  // Group by player to get correct per-player totals
+  var types = {};
   var byPlayerSum = {};
   dayRows.forEach(function(r){
     var name = r['Athlete']||r['athlete']||'';
@@ -1436,10 +1435,10 @@ function renderActivity(){
   });
   var pNames = Object.keys(byPlayerSum);
   var playerCount = pNames.length;
-  var totalMin = pNames.reduce(function(s,p){return s+byPlayerSum[p].min;},0);
-  var totalPC  = pNames.reduce(function(s,p){return s+byPlayerSum[p].pc; },0);
-  var avgMin = playerCount ? Math.round(totalMin/playerCount) : 0;
-  var avgPC  = playerCount ? Math.round(totalPC/playerCount)  : 0;
+  var sumMin = pNames.reduce(function(s,p){return s+byPlayerSum[p].min;},0);
+  var sumPC  = pNames.reduce(function(s,p){return s+byPlayerSum[p].pc; },0);
+  var avgMin = playerCount ? Math.round(sumMin/playerCount) : 0;
+  var avgPC  = playerCount ? Math.round(sumPC/playerCount)  : 0;
   document.getElementById('act-day-cards').innerHTML =
     '<div class="metric"><div class="metric-label">Players training</div><div class="metric-value">'+playerCount+'</div><div class="metric-sub">'+dStr.split(',')[0]+'</div></div>'
     +'<div class="metric"><div class="metric-label">Avg minutes / player</div><div class="metric-value">'+avgMin+'<span>min</span></div><div class="metric-sub">team average</div></div>'
