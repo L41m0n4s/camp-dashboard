@@ -1413,8 +1413,14 @@ function renderActivity(){
 
   // Filter rows for selected day
   var dayRows = activityRows.filter(function(r){
-    return normDateStr(r['Date']) === tKey;
+    var rd = (r['Date']||'').trim();
+    return normDateStr(rd) === tKey;
   });
+  // Debug: log first few dates
+  if(activityRows.length > 0) {
+    var sample = activityRows.slice(0,3).map(function(r){ return JSON.stringify(r['Date'])+'=>'+normDateStr((r['Date']||'').trim()); });
+    console.log('tKey:', tKey, 'sample dates:', sample.join(' | '), 'matched:', dayRows.length);
+  }
 
   var statusEl = document.getElementById('act-status');
 
