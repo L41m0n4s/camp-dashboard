@@ -274,7 +274,6 @@
     <!-- Day summary cards -->
     <div class="metrics-row" id="act-day-cards" style="margin-bottom:24px"></div>
 
-    <div id="act-debug" style="background:#fff3cd;border:1px solid #f57c00;border-radius:6px;padding:10px 14px;margin-bottom:16px;font-family:monospace;font-size:11px;color:#333;line-height:1.8;">Loading debug info...</div>
     <!-- Drill pie charts -->
     <div class="section-label">Practice structure — selected day</div>
     <div class="pie-grid" style="margin-bottom:28px;">
@@ -1418,15 +1417,6 @@ function renderActivity(){
   });
 
   var statusEl = document.getElementById('act-status');
-
-  // ── DEBUG: show date info ──
-  var debugEl = document.getElementById('act-debug');
-  if(!debugEl){ debugEl=document.createElement('div'); debugEl.id='act-debug'; debugEl.style.cssText='background:#fff3cd;border:1px solid #f57c00;border-radius:6px;padding:10px 14px;margin-bottom:16px;font-family:monospace;font-size:11px;color:#333;line-height:1.8;'; document.getElementById('act-status').after(debugEl); }
-  var sampleDates = activityRows.slice(0,5).map(function(r){ return JSON.stringify(r['Date'])+' → normDateStr: '+normDateStr(r['Date']); });
-  debugEl.innerHTML = '<strong>tKey (selected day):</strong> '+tKey+'<br>'
-    +'<strong>Total activity rows:</strong> '+activityRows.length+'<br>'
-    +'<strong>Matched dayRows:</strong> '+dayRows.length+'<br>'
-    +'<strong>Sample dates from sheet:</strong><br>'+sampleDates.join('<br>');
 
   // ── Drill pie charts ──
   buildDrillPies(tKey);
