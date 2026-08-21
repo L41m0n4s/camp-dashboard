@@ -1441,7 +1441,7 @@ function renderActivity(){
   var avgPC  = playerCount ? Math.round(sumPC/playerCount)  : 0;
   document.getElementById('act-day-cards').innerHTML =
     '<div class="metric"><div class="metric-label">Players training</div><div class="metric-value">'+playerCount+'</div><div class="metric-sub">'+dStr.split(',')[0]+'</div></div>'
-    +'<div class="metric"><div class="metric-label">Avg minutes / player</div><div class="metric-value">'+avgMin+'<span>min</span></div><div class="metric-sub">team average</div></div>'
+    +'<div class="metric"><div class="metric-label">Avg minutes / player</div><div class="metric-value">'+avgMin+'<span>min</span></div><div class="metric-sub">rows:'+dayRows.length+' tKey:'+tKey+' d0:'+((dayRows[0]||{})['Date']||'?')+'</div></div>'
     +'<div class="metric"><div class="metric-label">Avg load (PS) / player</div><div class="metric-value">'+avgPC.toLocaleString()+'</div><div class="metric-sub">team average</div></div>'
 ;
 
