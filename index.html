@@ -699,7 +699,7 @@ function parseWorkoutCSV(csv) {
 
 function buildAthleteTabs() {
   document.getElementById('tabs-row').innerHTML = athletes.map(function(a){
-    return '<div class="tab" data-name="'+a.name+'" onclick="showAthlete(\''+a.name+'\')">'+a.name+'</div>';
+    return '<div class="tab" data-name="'+a.name+'" onclick="showAthlete(''+a.name+'')">'+a.name+'</div>';
   }).join('');
 }
 
@@ -1441,7 +1441,7 @@ function renderActivity(){
   var avgPC  = playerCount ? Math.round(sumPC/playerCount)  : 0;
   document.getElementById('act-day-cards').innerHTML =
     '<div class="metric"><div class="metric-label">Players training</div><div class="metric-value">'+playerCount+'</div><div class="metric-sub">'+dStr.split(',')[0]+'</div></div>'
-    +'<div class="metric"><div class="metric-label">Avg minutes / player</div><div class="metric-value">'+avgMin+'<span>min</span></div><div class="metric-sub">team average</div></div>'
+    +'<div class="metric"><div class="metric-label">Avg minutes / player</div><div class="metric-value">'+avgMin+'<span>min</span></div><div class="metric-sub">p:'+playerCount+' sum:'+sumMin+' key:'+(dayRows[0]?Object.keys(dayRows[0]).join('|'):'-')+'</div></div>'
     +'<div class="metric"><div class="metric-label">Avg load (PS) / player</div><div class="metric-value">'+avgPC.toLocaleString()+'</div><div class="metric-sub">team average</div></div>'
 ;
 
