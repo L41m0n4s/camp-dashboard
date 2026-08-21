@@ -1088,12 +1088,31 @@ function parseActivityCSV(text) {
   }).filter(function(r){return r['Athlete']||r['athlete'];});
 }
 
-function actDateKey(d){ return (d.getMonth()+1)+'/'+d.getDate()+'/'+d.getFullYear(); }
+function actDateKey(d){
+  if(!d||isNaN(d.getTime())) return '';
+  return (d.getMonth()+1)+'/'+d.getDate()+'/'+d.getFullYear();
+}
+function normDateStr(s) {
+  // Normalize a date string from the sheet to match actDateKey format
+  s = (s||'').trim();
+  if(!s) return '';
+  var parts = s.split('/');
+  if(parts.length === 3) {
+    return parseInt(parts[0])+'/'+parseInt(parts[1])+'/'+parseInt(parts[2]);
+  }
+  return actDateKey(parseDateStr(s));
+}
 
 function parseDateStr(s) {
-  // Handles M/D/YYYY
+  s = (s||'').trim();
+  if(!s) return new Date('invalid');
   var parts = s.split('/');
-  if(parts.length===3) return new Date(parseInt(parts[2]),parseInt(parts[0])-1,parseInt(parts[1]));
+  if(parts.length===3) {
+    var m=parseInt(parts[0]),d=parseInt(parts[1]),y=parseInt(parts[2]);
+    if(!isNaN(m)&&!isNaN(d)&&!isNaN(y)) return new Date(y,m-1,d);
+  }
+  var dparts = s.split('-');
+  if(dparts.length===3&&dparts[0].length===4) return new Date(parseInt(dparts[0]),parseInt(dparts[1])-1,parseInt(dparts[2]));
   return new Date(s);
 }
 
@@ -1511,7 +1530,7 @@ function renderActivity(){
   // For each day compute: main avg PS, avg min, and secondary type avg PSs (threshold 7+)
   var dayChartData = days7.map(function(d){
     var k = actDateKey(d);
-    var dayR = activityRows.filter(function(r){ return actDateKey(parseDateStr(r['Date']||''))===k; });
+    var dayR = activityRows.filter(function(r){ return normDateStr(r['Date'])===k; });
     if(!dayR.length) return {avgPC:0,avgMin:0,sec:{},n:0,isSelected:actDateKey(d)===tKey};
     // Group by player
     var byP={};
@@ -1564,7 +1583,7 @@ function renderActivity(){
   var allMainTypes = {};
   dayChartData.forEach(function(dd,i){
     var k = actDateKey(days7[i]);
-    var dayR = activityRows.filter(function(r){ return actDateKey(parseDateStr(r['Date']||''))===k; });
+    var dayR = activityRows.filter(function(r){ return normDateStr(r['Date'])===k; });
     var typeCount = {};
     dayR.forEach(function(r){
       var t=(r['Training Type']||'').trim();
@@ -1595,7 +1614,7 @@ function renderActivity(){
       data: dayChartData.map(function(dd,i){
         // avg PS for players who did this activity on this day
         var k = actDateKey(days7[i]);
-        var dayR = activityRows.filter(function(r){ return actDateKey(parseDateStr(r['Date']||''))===k&&(r['Training Type']||'').trim()===t; });
+        var dayR = activityRows.filter(function(r){ return normDateStr(r['Date'])===k&&(r['Training Type']||'').trim()===t; });
         if(!dayR.length) return 0;
         var byP={};
         dayR.forEach(function(r){var n=r['Athlete']||'';if(n){if(!byP[n])byP[n]=0;byP[n]+=(parseInt(r['PC'])||0);}});
@@ -1659,7 +1678,7 @@ function renderActivity(){
   var playerData={};
   days7.forEach(function(d){
     var k=actDateKey(d);
-    activityRows.filter(function(r){return actDateKey(parseDateStr(r['Date']||''))===k;}).forEach(function(r){
+    activityRows.filter(function(r){return normDateStr(r['Date'])===k;}).forEach(function(r){
       var name=r['Athlete']||'';
       if(!name) return;
       if(!playerData[name]) playerData[name]={mins:Array(7).fill(0),loads:Array(7).fill(0),types:{}};
@@ -1677,7 +1696,7 @@ function renderActivity(){
   var SECONDARY_THRESHOLD = 7;
   var dayStats = days7.map(function(d){
     var k = actDateKey(d);
-    var dayR = activityRows.filter(function(r){ return actDateKey(parseDateStr(r['Date']||''))===k; });
+    var dayR = activityRows.filter(function(r){ return normDateStr(r['Date'])===k; });
     // Group by player, sum PC and min per player
     var byP = {};
     dayR.forEach(function(r){
