@@ -1223,8 +1223,7 @@ function buildDrillPies(tKey) {
   // Filter drill rows for selected day
   var dayDrills = drillRows.filter(function(r){
     if(!r['Date']) return false;
-    var d = parseDrillDate(r['Date']);
-    return actDateKey(d) === tKey;
+    return normDateStr(r['Date']) === tKey;
   });
 
   // Aggregate time by category
@@ -1414,8 +1413,7 @@ function renderActivity(){
 
   // Filter rows for selected day
   var dayRows = activityRows.filter(function(r){
-    var d = parseDateStr(r['Date']||'');
-    return actDateKey(d) === tKey;
+    return normDateStr(r['Date']) === tKey;
   });
 
   var statusEl = document.getElementById('act-status');
@@ -1425,17 +1423,21 @@ function renderActivity(){
 
   // ── Day summary cards ──
   var totalMin = 0, totalPC = 0, players = {}, types = {};
+  // Group by player to get correct per-player totals
+  var byPlayerSum = {};
   dayRows.forEach(function(r){
-    var min = parseInt(r['Duration (min)'])||0;
-    var pc  = parseInt(r['PC'])||0;
     var name = r['Athlete']||r['athlete']||'';
     var type = r['Training Type']||'';
-    totalMin += min; totalPC += pc;
-    if(name) players[name]=true;
+    if(!name) return;
+    if(!byPlayerSum[name]) byPlayerSum[name]={min:0,pc:0};
+    byPlayerSum[name].min += (parseInt(r['Duration (min)'])||0);
+    byPlayerSum[name].pc  += (parseInt(r['PC'])||0);
     if(type) types[type]=(types[type]||0)+1;
   });
-  var playerCount = Object.keys(players).length;
-
+  var pNames = Object.keys(byPlayerSum);
+  var playerCount = pNames.length;
+  var totalMin = pNames.reduce(function(s,p){return s+byPlayerSum[p].min;},0);
+  var totalPC  = pNames.reduce(function(s,p){return s+byPlayerSum[p].pc; },0);
   var avgMin = playerCount ? Math.round(totalMin/playerCount) : 0;
   var avgPC  = playerCount ? Math.round(totalPC/playerCount)  : 0;
   document.getElementById('act-day-cards').innerHTML =
