@@ -402,7 +402,7 @@
       </select>
       <span style="font-family:monospace;font-size:10px;color:#8ca0bc;">Select a player to see their minutes &amp; PIR across all games</span>
     </div>
-    <div id="game-trend-wrap" style="display:none">
+    <div id="game-trend-wrap">
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:32px;">
       <div class="chart-card">
         <div class="chart-card-title">Minutes per player — season trend</div>
@@ -739,13 +739,25 @@ function showPage(page) {
 // ── REFRESH ──────────────────────────────────────────────────────────────────
 function loadAll() {
   var btn = document.getElementById('refresh-btn');
-  btn.classList.add('loading');
-  var p1 = loadWorkouts();
-  var p2 = loadWellness();
-  var p3 = loadAvailability();
-  var p4 = loadActivity();
-  var p5 = loadDrills();
-  Promise.all([p1, p2, p3, p4, p5]).then(function() { btn.classList.remove('loading'); }).catch(function(e){ console.error('loadAll error:',e); btn.classList.remove('loading'); });
+  if(btn) btn.classList.add('loading');
+  var done = function(){ if(btn) btn.classList.remove('loading'); };
+  var safe = function(p){ return (p||Promise.resolve()).catch(function(e){ console.warn('fetch error:',e.message); }); };
+  // Load drills first so drillRows is ready when renderActivity runs
+  safe(loadDrills()).then(function(){
+    Promise.all([
+      safe(loadWorkouts()),
+      safe(loadWellness()),
+      safe(loadAvailability()),
+      safe(loadActivity())
+    ]).then(done).catch(done);
+  }).catch(function(){
+    Promise.all([
+      safe(loadWorkouts()),
+      safe(loadWellness()),
+      safe(loadAvailability()),
+      safe(loadActivity())
+    ]).then(done).catch(done);
+  });
 }
 
 // ── WORKOUTS ─────────────────────────────────────────────────────────────────
@@ -2241,6 +2253,12 @@ function buildGameAnalysis(){
   // Store for use in buildGameTrend
   window._byGame=byGame;
   window._gameDates=gameDates;
+
+  // Auto-select first player and show trends
+  if(sel && playerNames.length) {
+    sel.value = playerNames[0];
+    buildGameTrend();
+  }
 }
 
 var gameMinsChart=null, gamePirChart=null;
