@@ -823,7 +823,7 @@ function loadWellness() {
     .then(function(text){
       wellnessRows = parseWellnessCSV(text);
       renderWellness();
-      buildAvailTrend();
+      try{buildAvailTrend();}catch(e2){console.error("AvailTrend error:",e2);}
     })
     .catch(function(e){
       document.getElementById('wellness-status').textContent = '✗ ' + e.message;
@@ -875,8 +875,8 @@ function renderWellness() {
     ['pie-fatigue','pie-soreness','pie-sleep'].forEach(function(id){var c=Chart.getChart(id);if(c)c.destroy();});
     document.getElementById('comment-body').innerHTML = '<tr><td colspan="3" class="no-data">No responses for this day</td></tr>';
     document.getElementById('drilldown').classList.remove('show');
-  buildWellnessFlags(tKey);
-  populateWellnessPlayerSelect();
+  try{buildWellnessFlags(tKey);}catch(e){console.error("Flags error:",e);}
+  try{populateWellnessPlayerSelect();}catch(e){console.error("Select error:",e);}
     buildMoodChart();
     return;
   }
@@ -884,8 +884,8 @@ function renderWellness() {
   ws.className = 'w-status ok';
   ws.textContent = '✓ ' + dayRows.length + ' response' + (dayRows.length>1?'s':'') + ' for ' + dStr;
   document.getElementById('drilldown').classList.remove('show');
-  buildWellnessFlags(tKey);
-  populateWellnessPlayerSelect();
+  try{buildWellnessFlags(tKey);}catch(e){console.error("Flags error:",e);}
+  try{populateWellnessPlayerSelect();}catch(e){console.error("Select error:",e);}
 
   buildPie('pie-fatigue',  'FATIGUE',         'Fatigue',         dayRows);
   buildPie('pie-soreness', 'MUSCLE SORENESS', 'Muscle Soreness', dayRows);
@@ -1157,7 +1157,7 @@ function loadActivity() {
     .then(function(text){
       activityRows = parseActivityCSV(text);
       renderActivity();
-      buildAvailTrend();
+      try{buildAvailTrend();}catch(e2){console.error("AvailTrend2 error:",e2);}
     })
     .catch(function(e){
       var el = document.getElementById('act-status');
@@ -1622,8 +1622,8 @@ function renderActivity(){
 
   // ── Monotony chart (uses all activity data) ──
   buildMonotonyChart();
-  buildACWR();
-  buildGameAnalysis();
+  try{buildACWR();}catch(e){console.error("ACWR error:",e);}
+  try{buildGameAnalysis();}catch(e){console.error("Game error:",e);}
 
   // ── Build per-day averages + secondary stacked data for charts ──
   // For each day compute: main avg PS, avg min, and secondary type avg PSs (threshold 7+)
