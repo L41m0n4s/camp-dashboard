@@ -700,6 +700,18 @@ var AVAIL_CSV    = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRDPC79mBEw2
 var ACTIVITY_CSV = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTFzeR7REdLwy71kz-dtLhexw59cyENKgjNhRvYVsQLnptLs6pCkKJtYLYACdqluA/pub?output=csv';
 var DRILL_CSV    = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRyp4qnXKoZjG0-mi3a_ciY3sIaJ_y5oTNrGKQ44wpdWJ6FCAZMn96n8bUEclaE0g/pub?output=csv';
 
+// Cross-browser fetch helper that works in both Chrome and Firefox
+function fetchCSV(url) {
+  return fetch(url + '&t=' + Date.now(), {
+    method: 'GET',
+    mode: 'cors',
+    cache: 'no-store'
+  }).then(function(r) {
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    return r.text();
+  });
+}
+
 var SCORE_COLORS = ['#d63031','#e17055','#fdcb6e','#81b214','#00b894'];
 var gridC = 'rgba(30,80,180,0.08)';
 var tickC = '#4a6080';
@@ -731,7 +743,7 @@ function loadAll() {
   var p3 = loadAvailability();
   var p4 = loadActivity();
   var p5 = loadDrills();
-  Promise.all([p1, p2, p3, p4, p5]).then(function() { btn.classList.remove('loading'); });
+  Promise.all([p1, p2, p3, p4, p5]).then(function() { btn.classList.remove('loading'); }).catch(function(e){ console.error('loadAll error:',e); btn.classList.remove('loading'); });
 }
 
 // ── WORKOUTS ─────────────────────────────────────────────────────────────────
@@ -739,8 +751,7 @@ function loadWorkouts() {
   var status = document.getElementById('status-bar');
   status.className = '';
   status.textContent = 'Fetching data…';
-  return fetch(WORKOUT_CSV + '&t=' + Date.now())
-    .then(function(r) { return r.text(); })
+  return fetchCSV(WORKOUT_CSV)
     .then(function(csv) {
       athletes = parseWorkoutCSV(csv);
       if (!athletes.length) throw new Error('No athlete data found');
@@ -818,8 +829,7 @@ function showAthlete(name) {
 
 // ── WELLNESS ─────────────────────────────────────────────────────────────────
 function loadWellness() {
-  return fetch(WELLNESS_CSV + '&t=' + Date.now())
-    .then(function(r){return r.text();})
+  return fetchCSV(WELLNESS_CSV)
     .then(function(text){
       wellnessRows = parseWellnessCSV(text);
       renderWellness();
@@ -1001,8 +1011,7 @@ function buildMoodChart() {
 
 // ── AVAILABILITY ──────────────────────────────────────────────────────────────
 function loadAvailability() {
-  return fetch(AVAIL_CSV + '&t=' + Date.now())
-    .then(function(r){return r.text();})
+  return fetchCSV(AVAIL_CSV)
     .then(function(text){renderAvailability(text);})
     .catch(function(e){
       var el = document.getElementById('avail-status');
@@ -1152,8 +1161,7 @@ var drillTypeChart = null, drillSpaceChart = null, drillSizeChart = null;
 var monotonyChart = null;
 
 function loadActivity() {
-  return fetch(ACTIVITY_CSV + '&t=' + Date.now())
-    .then(function(r){return r.text();})
+  return fetchCSV(ACTIVITY_CSV)
     .then(function(text){
       activityRows = parseActivityCSV(text);
       renderActivity();
@@ -1247,8 +1255,7 @@ function typeBadge(t){
 
 
 function loadDrills() {
-  return fetch(DRILL_CSV + '&t=' + Date.now())
-    .then(function(r){ return r.text(); })
+  return fetchCSV(DRILL_CSV)
     .then(function(text){ drillRows = parseDrillCSV(text); })
     .catch(function(e){ console.warn('Drill CSV failed:', e.message); });
 }
