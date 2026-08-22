@@ -395,13 +395,14 @@
 
     <!-- Game Analysis -->
     <div class="section-label">Game analysis</div>
-    <div class="game-card" id="game-log-card">
-      <div class="game-card-title">All games — player minutes &amp; PIR</div>
-      <div style="overflow-x:auto"><table class="game-table" id="game-log-table">
-        <thead id="game-log-thead"></thead>
-        <tbody id="game-log-tbody"></tbody>
-      </table></div>
+<div id="game-log-card" style="display:none"></div>
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;">
+      <select class="w-player-select" id="game-player-select" onchange="buildGameTrend()">
+        <option value="">Select player…</option>
+      </select>
+      <span style="font-family:monospace;font-size:10px;color:#8ca0bc;">Select a player to see their minutes &amp; PIR across all games</span>
     </div>
+    <div id="game-trend-wrap" style="display:none">
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:32px;">
       <div class="chart-card">
         <div class="chart-card-title">Minutes per player — season trend</div>
@@ -412,6 +413,7 @@
         <div class="chart-wrap" style="height:220px"><canvas id="game-pir-chart"></canvas></div>
       </div>
     </div>
+    </div><!-- /game-trend-wrap -->
     <!-- 7-day per-player table -->
     <div class="section-label">Past 7 days — per player summary</div>
     <div class="table-wrap" style="overflow-x:auto">
@@ -2209,12 +2211,7 @@ function buildGameAnalysis(){
     return parseInt(r['Game minutes']||0)>0 || (r['PIR']&&r['PIR'].trim()!==''&&r['PIR'].trim()!=='0');
   });
 
-  var card = document.getElementById('game-log-card');
-
-  if(!gameRows.length){
-    if(card) card.innerHTML='<div class="game-card-title">Game analysis</div><div style="padding:20px;color:#8ca0bc;font-family:monospace;font-size:11px;text-align:center">No game data yet — game minutes and PIR will appear here after games</div>';
-    return;
-  }
+  if(!gameRows.length){ return; }
 
   // Group by date
   var byGame = {};
@@ -2225,118 +2222,94 @@ function buildGameAnalysis(){
     byGame[dk].players.push({
       name:r['Athlete']||'',
       mins:parseInt(r['Game minutes'])||0,
-      pir:r['PIR']?parseInt(r['PIR']):null
+      pir:r['PIR']&&r['PIR'].trim()!==''?parseInt(r['PIR']):null
     });
   });
 
   var gameDates = Object.keys(byGame).sort(function(a,b){return new Date(a)-new Date(b);});
-  var currentGameIdx = gameDates.length-1;
 
-  function renderGameTable(idx){
-    var dk = gameDates[idx];
-    var g  = byGame[dk];
-    var dt = new Date(dk);
-    var dateStr = String(dt.getDate()).padStart(2,'0')+'/'+String(dt.getMonth()+1).padStart(2,'0')+'/'+dt.getFullYear();
-
-    // Sort players by minutes desc
-    var sorted = g.players.slice().sort(function(a,b){return b.mins-a.mins;});
-
-    var teamMins = sorted.reduce(function(s,p){return s+p.mins;},0);
-    var teamPIR  = sorted.reduce(function(s,p){return s+(p.pir||0);},0);
-    var avgMins  = sorted.length ? Math.round(teamMins/sorted.length) : 0;
-
-    var html2 = '<div style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-bottom:1px solid var(--border);background:var(--surface2);">'
-      +'<div style="font-family:monospace;font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:#4a6080;">Game '+( idx+1)+' of '+gameDates.length+' &nbsp;·&nbsp; '+dateStr+' &nbsp;·&nbsp; '+g.day+'</div>'
-      +'<div style="display:flex;gap:8px;">'
-      +'<button onclick="window._changeGame(-1)" style="font-family:monospace;font-size:11px;background:none;border:1px solid rgba(30,80,180,0.2);color:#4a6080;padding:4px 10px;border-radius:4px;cursor:pointer;"'+(idx===0?' disabled':'')+'>← Prev game</button>'
-      +'<button onclick="window._changeGame(1)"  style="font-family:monospace;font-size:11px;background:none;border:1px solid rgba(30,80,180,0.2);color:#4a6080;padding:4px 10px;border-radius:4px;cursor:pointer;"'+(idx===gameDates.length-1?' disabled':'')+'>Next game →</button>'
-      +'</div></div>';
-
-    // Summary row
-    html2 += '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border);border-bottom:1px solid var(--border);">'
-      +'<div style="background:var(--surface2);padding:10px 16px;text-align:center"><div style="font-family:monospace;font-size:9px;text-transform:uppercase;color:#8ca0bc;margin-bottom:2px">Players</div><div style="font-size:18px;font-weight:600;color:#0d1b3e">'+sorted.length+'</div></div>'
-      +'<div style="background:var(--surface2);padding:10px 16px;text-align:center"><div style="font-family:monospace;font-size:9px;text-transform:uppercase;color:#8ca0bc;margin-bottom:2px">Avg minutes</div><div style="font-size:18px;font-weight:600;color:#0d1b3e">'+avgMins+'</div></div>'
-      +'<div style="background:var(--surface2);padding:10px 16px;text-align:center"><div style="font-family:monospace;font-size:9px;text-transform:uppercase;color:#8ca0bc;margin-bottom:2px">Team PIR</div><div style="font-size:18px;font-weight:600;color:'+(teamPIR>=0?'#2e7d32':'#c0300a')+'">'+( teamPIR>0?'+':'')+teamPIR+'</div></div>'
-      +'</div>';
-
-    // Player table
-    html2 += '<table style="width:100%;border-collapse:collapse;font-size:12px;">'
-      +'<thead><tr style="background:var(--surface2);">'
-      +'<th style="font-family:monospace;font-size:9px;letter-spacing:0.1em;text-transform:uppercase;color:#8ca0bc;padding:8px 16px;text-align:left;border-bottom:1px solid var(--border);">Player</th>'
-      +'<th style="font-family:monospace;font-size:9px;letter-spacing:0.1em;text-transform:uppercase;color:#8ca0bc;padding:8px 16px;text-align:right;border-bottom:1px solid var(--border);">Minutes</th>'
-      +'<th style="font-family:monospace;font-size:9px;letter-spacing:0.1em;text-transform:uppercase;color:#8ca0bc;padding:8px 16px;text-align:right;border-bottom:1px solid var(--border);">PIR</th>'
-      +'<th style="font-family:monospace;font-size:9px;letter-spacing:0.1em;text-transform:uppercase;color:#8ca0bc;padding:8px 16px;text-align:left;border-bottom:1px solid var(--border);">Load bar</th>'
-      +'</tr></thead><tbody>';
-
-    var maxMins = sorted.length ? sorted[0].mins : 1;
-    sorted.forEach(function(p){
-      var pirStr = p.pir!==null ? (p.pir>0?'+':'')+p.pir : '—';
-      var pirCls = p.pir>0?'color:#2e7d32;font-weight:600':p.pir<0?'color:#c0300a;font-weight:600':'color:#8ca0bc';
-      var barW   = Math.round((p.mins/maxMins)*100);
-      var barCol = p.mins>=30?'#1a56c4':p.mins>=20?'#43a047':'#8ca0bc';
-      html2 += '<tr style="border-bottom:0.5px solid rgba(30,80,180,0.08);">'
-        +'<td style="padding:8px 16px;font-weight:500;color:#0d1b3e;">'+p.name+'</td>'
-        +'<td style="padding:8px 16px;text-align:right;font-family:monospace;font-weight:600;color:#1a56c4;">'+p.mins+'<span style="color:#8ca0bc;font-weight:400;font-size:10px"> min</span></td>'
-        +'<td style="padding:8px 16px;text-align:right;font-family:monospace;'+pirCls+';">'+pirStr+'</td>'
-        +'<td style="padding:8px 16px;">'
-        +'<div style="background:rgba(30,80,180,0.08);border-radius:3px;height:6px;width:120px;">'
-        +'<div style="background:'+barCol+';border-radius:3px;height:6px;width:'+barW+'%;"></div>'
-        +'</div></td>'
-        +'</tr>';
-    });
-    html2 += '</tbody></table>';
-    if(card) card.innerHTML = html2;
-  }
-
-  function changeGame(delta){
-    currentGameIdx = Math.max(0, Math.min(gameDates.length-1, currentGameIdx+delta));
-    renderGameTable(currentGameIdx);
-  }
-  window._changeGame = changeGame;
-
-  renderGameTable(currentGameIdx);
-
-  // Season trend charts
-  var CHART_COLORS=['#1a56c4','#e8630a','#43a047','#8e24aa','#e53935','#00897b','#f57c00','#546e7a','#d81b60','#039be5','#6d4c41','#c0ca33','#ef6c00','#1565c0'];
+  // Populate player selector
   var allPlayers={};
   gameRows.forEach(function(r){var n=r['Athlete']||'';if(n)allPlayers[n]=true;});
   var playerNames=Object.keys(allPlayers).sort();
+  var sel=document.getElementById('game-player-select');
+  if(sel){
+    sel.innerHTML='<option value="">Select player…</option>'
+      +playerNames.map(function(n){return '<option value="'+n+'">'+n+'</option>';}).join('');
+  }
+
+  // Store for use in buildGameTrend
+  window._byGame=byGame;
+  window._gameDates=gameDates;
+}
+
+var gameMinsChart=null, gamePirChart=null;
+
+function buildGameTrend(){
+  var sel=document.getElementById('game-player-select');
+  var name=sel?sel.value:'';
+  var wrap=document.getElementById('game-trend-wrap');
+  if(!name){if(wrap)wrap.style.display='none';return;}
+  if(wrap)wrap.style.display='';
+
+  var byGame=window._byGame||{};
+  var gameDates=window._gameDates||[];
+  if(!gameDates.length) return;
 
   var gameLabels=gameDates.map(function(dk){
     var dt=new Date(dk);
     return String(dt.getDate()).padStart(2,'0')+'/'+String(dt.getMonth()+1).padStart(2,'0');
   });
 
-  function makeDatasets(field){
-    return playerNames.map(function(n,i){
-      return {
-        label:n,
-        data:gameDates.map(function(dk){
-          var g=byGame[dk];
-          var p=g.players.find(function(x){return x.name===n;});
-          return p?(field==='mins'?p.mins:p.pir):null;
-        }),
-        borderColor:CHART_COLORS[i%CHART_COLORS.length],
-        backgroundColor:'transparent',
-        borderWidth:2,pointRadius:5,tension:0.3,spanGaps:false
-      };
-    });
-  }
+  var minsData=gameDates.map(function(dk){
+    var g=byGame[dk];
+    var p=g.players.find(function(x){return x.name===name;});
+    return p?p.mins:null;
+  });
+  var pirData=gameDates.map(function(dk){
+    var g=byGame[dk];
+    var p=g.players.find(function(x){return x.name===name;});
+    return p&&p.pir!==null?p.pir:null;
+  });
 
-  var chartOpts=function(yLabel){return{
+  var sharedOpts=function(yLabel,color){return{
     responsive:true,maintainAspectRatio:false,
-    plugins:{legend:{display:true,position:'bottom',labels:{color:tickC,font:{size:9},boxWidth:8,padding:6}}},
+    plugins:{
+      legend:{display:false},
+      tooltip:{callbacks:{label:function(ctx){return ' '+ctx.raw+(yLabel==='Minutes'?' min':'');}}}
+    },
     scales:{
       x:{ticks:{color:tickC,font:{size:11}},grid:{color:gridC},border:{display:false}},
-      y:{ticks:{color:tickC,font:{size:11}},grid:{color:gridC},border:{display:false},title:{display:true,text:yLabel,color:tickC,font:{size:10}}}
+      y:{ticks:{color:tickC,font:{size:11}},grid:{color:gridC},border:{display:false},
+        title:{display:true,text:yLabel,color:tickC,font:{size:10}}}
     }
   };};
 
   if(gameMinsChart) gameMinsChart.destroy();
-  gameMinsChart=new Chart(document.getElementById('game-mins-chart'),{type:'line',data:{labels:gameLabels,datasets:makeDatasets('mins')},options:chartOpts('Minutes')});
+  gameMinsChart=new Chart(document.getElementById('game-mins-chart'),{
+    type:'line',
+    data:{labels:gameLabels,datasets:[{
+      label:'Minutes',data:minsData,
+      borderColor:'#1a56c4',backgroundColor:'rgba(26,86,196,0.08)',
+      borderWidth:2,pointRadius:5,pointBackgroundColor:'#1a56c4',
+      tension:0.3,fill:true,spanGaps:false
+    }]},
+    options:sharedOpts('Minutes','#1a56c4')
+  });
+
   if(gamePirChart) gamePirChart.destroy();
-  gamePirChart=new Chart(document.getElementById('game-pir-chart'),{type:'line',data:{labels:gameLabels,datasets:makeDatasets('pir')},options:chartOpts('PIR')});
+  gamePirChart=new Chart(document.getElementById('game-pir-chart'),{
+    type:'bar',
+    data:{labels:gameLabels,datasets:[{
+      label:'PIR',data:pirData,
+      backgroundColor:pirData.map(function(v){return v>=0?'rgba(26,86,196,0.7)':'rgba(229,57,53,0.7)';}),
+      borderColor:pirData.map(function(v){return v>=0?'#1a56c4':'#e53935';}),
+      borderWidth:1,borderRadius:4
+    }]},
+    options:sharedOpts('PIR','#1a56c4')
+  });
 }
+
 
 // ── BOOT ──────────────────────────────────────────────────────────────────────
 showPage('activity');
